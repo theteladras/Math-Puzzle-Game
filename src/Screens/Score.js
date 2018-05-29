@@ -36,12 +36,12 @@ class Score extends Component {
     }
 
     renderOtherScores(node) {  // mapping through all results of one stage and setting them up (drop down)
-        return this.props.rekordi[node].map((subnode) => {
+        return this.props.rekordi[node].map((subnode, i) => {
             return (
                 <View style={styles.dropDown} key={i}>
-                    <Text style={[{ color: 'transparent' }, styles.text]}>11</Text>
+                    <Text style={[{ color: 'transparent' }, styles.text]}>11111</Text>
                     <Text style={[{ flex: 0.5 }, styles.text]}>{subnode}<Text style={{ fontSize: 12 }}>sec</Text></Text>
-                    <Text style={[{ color: 'transparent' }, styles.text]}>11</Text>
+                    <Text style={[{ color: 'transparent' }, styles.text]}>11111</Text>
                 </View>
             );
         });
@@ -54,9 +54,9 @@ class Score extends Component {
                         <View key={i}>
                             <TouchableHighlight onPress={this.showThisScore.bind(this, node)}>
                                 <View style={[{ flexDirection: 'row', justifyContent: 'space-between'}, this.state.showBlock == i ? { borderBottomWidth: 2 } : undefined]}>
-                                    <Text style={[{ textAlign: 'center' }, styles.text]}>{node < 10 ? this.renderNumber(node, 1) : node }</Text>
+                                    <Text style={[{ textAlign: 'center' }, styles.text]}>{node < 10 ? this.renderNumber(node, 1) : node }<Text style={{ color: 'transparent' }}>11</Text></Text>
                                     <Text style={[{flex: 0.5, textAlign: 'center', textAlign: 'left' }, styles.text]}>{_.min(this.props.rekordi[node])}<Text style={{ fontSize: 12 }}>sec</Text></Text>
-                                    <Text style={[{ textAlign: 'center' }, styles.text]}>{this.props.rekordi[node].length < 10 ? this.renderNumber(this.props.rekordi[node].length) : this.props.rekordi[node].length }</Text>
+                                    <Text style={[{ textAlign: 'center' }, styles.text]}>{this.props.rekordi[node].length < 10 ? this.renderNumber(this.props.rekordi[node].length) : this.props.rekordi[node].length }<Text style={{ color: 'transparent' }}>11</Text></Text>
                                 </View>
                             </TouchableHighlight>
                             <View>

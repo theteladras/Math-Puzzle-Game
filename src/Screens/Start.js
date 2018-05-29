@@ -54,17 +54,16 @@ class Start extends Component {
             />
             <Image source={require('../Resources/logo.png')} style={styles.logoImage} />
             <Text style={styles.text}>TCGame</Text>
-            
+            <View style={{ bottom: -30 }}>
                 <TouchableOpacity onPress={() => { Actions.pick() }} style={{ width: 120, height: 120, marginTop: 10, alignSelf: 'center' }}>
-                
                     <Image source={require('../Resources/power.png')} style={styles.button} />
-                
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => { Actions.score({ rekordi: this.props.rekordi }) }} style={styles.scoreTouchable}>
                     <Text style={styles.score}>
                         Score List
                     </Text>
                 </TouchableOpacity>
+            </View>
         </ImageBackground>
         );
     }

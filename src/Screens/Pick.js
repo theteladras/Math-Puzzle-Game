@@ -34,7 +34,7 @@ export default class Pick extends Component {
             this.state.comeIn,           
             {
               toValue: width*1.3,                   
-              duration: 800,              
+              duration: 300,              
             }
           ).start(() => {
               Animated.timing(                  
@@ -48,7 +48,7 @@ export default class Pick extends Component {
                   this.state.comeIn,            
                   {
                       toValue: 0,                   
-                      duration: 200,              
+                      duration: 300,              
                   }
                   ).start(); 
                   }); 

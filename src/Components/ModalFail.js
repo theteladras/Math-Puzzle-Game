@@ -37,6 +37,7 @@ const styles = {
     modalParagraph: {
         textAlign: 'center',
         fontSize: 16,
+        paddingBottom: 10,
     },
     cps: {
         textAlign: 'center',

@@ -10,12 +10,13 @@ import { Timer,
 
 
 class Status extends Component {
-    state = { sec: 0 };
+    state = { sec: 0, tick: 0 };
 
     componentDidMount() {
-        this.interval = setInterval(() => this.setState({ sec: this.state.sec + 1 }), 1000 );
+        this.interval = setInterval(() => this.setState({ sec: this.state.sec + this.state.tick }), 1000 );
     }
     componentWillReceiveProps(nextProps) {
+        if (nextProps.klika == 1) { this.setState({ tick: 1 }) } // triggering the timer afther first click
         if (nextProps.rerender) {  // reseting time when starting the same level from the lvl pick screen
             console.log('rerender part');
             this.setState({ sec: 0 });
@@ -25,7 +26,7 @@ class Status extends Component {
             this.props.Timer(this.state.sec);
         }
         if (nextProps.nivo != this.props.nivo || nextProps.trenutni_nivo != this.props.trenutni_nivo) {  // timer reseting when the conditions are met
-            this.setState({ sec: 0 });
+            this.setState({ sec: 0, tick: 0 });
             this.props.clickCounterReset();
             this.props.resetTimePerClickCount(); // reseting the records for time per click in redux and seting it to []
         }
@@ -36,16 +37,24 @@ class Status extends Component {
                 this.props.Timer(this.state.sec);
             });
         }
-        if (nextProps.per_click_flag) {  // triggered when the measured clicks start happening, for every click
+        if (nextProps.per_click_flag) { // triggered when the measured clicks start happening, for every click
             console.log('ovde sam')
             this.props.timePerClickCount(this.state.sec); // recording time needed for every click
             this.props.requestTimePerClickValue(false);
+        }
+        if (nextProps.zivot < this.props.zivot) { // when out of lifes
+            this.setState({ sec: 0 });
+            this.props.resetTimePerClickCount();
+            this.props.Timer(this.state.sec);
         }
         
     }
     
 
     render() {
+        console.log('arr ', this.props.arr_klika_vreme);
+        console.log('ovaj nivo je ', this.props.trenutni_nivo);
+        console.log('per klik flag ', this.props.per_click_flag);
         return (
             <View>
                 <View style={styles.container}>

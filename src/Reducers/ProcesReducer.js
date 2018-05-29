@@ -37,7 +37,7 @@ const INITIAL_STATE = {
       case LFP:
         return { ...state, zivot: state.zivot + 1  };
       case LFPD:
-        return { ...state, zivot: state.zivot - action.payload - 1  };
+        return { ...state, zivot: state.zivot - action.payload  };
       case RLFP:
         return { ...state, zivot: 1 };
       case LVL:
