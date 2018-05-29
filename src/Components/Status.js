@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
 import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
-import { Timer, clickCounterReset, resetTimePerClickCount, timePerClickCount } from '../Reactions'
+import { Timer, 
+    clickCounterReset, 
+    resetTimePerClickCount, 
+    timePerClickCount, 
+    requestTimePerClickValue, 
+    Rerender } from '../Reactions'
 
 
 class Status extends Component {
@@ -11,25 +16,36 @@ class Status extends Component {
         this.interval = setInterval(() => this.setState({ sec: this.state.sec + 1 }), 1000 );
     }
     componentWillReceiveProps(nextProps) {
+        if (nextProps.rerender) {  // reseting time when starting the same level from the lvl pick screen
+            console.log('rerender part');
+            this.setState({ sec: 0 });
+            this.props.Rerender(false);
+        }
         if (nextProps.flag != this.props.flag) {  // saving the result time in redux
             this.props.Timer(this.state.sec);
         }
-        if (nextProps.nivo != this.props.nivo) {  // timer reseting when the conditions are met
+        if (nextProps.nivo != this.props.nivo || nextProps.trenutni_nivo != this.props.trenutni_nivo) {  // timer reseting when the conditions are met
             this.setState({ sec: 0 });
-        }
-        if (this.props.nivo != nextProps.nivo) { // when the lvl changes
-            this.props.Timer(this.state.sec);
             this.props.clickCounterReset();
             this.props.resetTimePerClickCount(); // reseting the records for time per click in redux and seting it to []
         }
-        if (this.props.per_click_flag != nextProps.per_click_flag) {
+        if (nextProps.arr_klika_vreme == []) {  // reseting time state when the lvl starts (etc. afther lvl repeat)
+            this.setState({ sec: 0 }, () => {
+                this.props.clickCounterReset();
+                this.props.resetTimePerClickCount();
+                this.props.Timer(this.state.sec);
+            });
+        }
+        if (nextProps.per_click_flag) {  // triggered when the measured clicks start happening, for every click
+            console.log('ovde sam')
             this.props.timePerClickCount(this.state.sec); // recording time needed for every click
-        } 
+            this.props.requestTimePerClickValue(false);
+        }
+        
     }
     
 
     render() {
-        console.log('nivo ', this.props.nivo);
         return (
             <View>
                 <View style={styles.container}>
@@ -73,4 +89,5 @@ const mapStateToProps = ({ proces }) => {
     return { nivo, zivot, trenutni_nivo, rerender, flag, klika, arr_klika_vreme, per_click_flag };
   };
 
-export default connect(mapStateToProps, { Timer, clickCounterReset, timePerClickCount, resetTimePerClickCount })(Status);
+export default connect(mapStateToProps, 
+    { Timer, clickCounterReset, timePerClickCount, resetTimePerClickCount, requestTimePerClickValue, Rerender })(Status);

@@ -13,7 +13,8 @@ import { unlockNextLVL,
         clickCounter,
         requestTimePerClickValue,
         lifepointsDecrese,
-        clickCounterReset } from '../Reactions'
+        clickCounterReset,
+        resetTimePerClickCount } from '../Reactions'
 import { spotFinder, yellowBoxes } from '../Functions/levelGenerator'
 import ModalComplete from './ModalComplete'
 import ModalFail from './ModalFail'
@@ -56,7 +57,7 @@ class Field extends Component {
     pressTile(index) {  //trigger for the tile press
         if (_.includes(this.state.nextToClick, index) && this.state.nextToClick.length > 0) { // lvl progress afther first click
             this.props.clickCounter(); // recording how many clicks are made
-            this.props.requestTimePerClickValue(); // geting the time per click value
+            this.props.requestTimePerClickValue(true); // geting the time per click value
             let nextToClick;
             if (this.state.clickedTile.length == this.state.chosenTiles.length) {
                 nextToClick = [];
@@ -79,6 +80,7 @@ class Field extends Component {
                             this.setState({ gameFail: true });
                             this.props.lifepointsDecrese(( this.state.chosenTiles.length - this.state.clickedTile.length ));
                             this.props.clickCounterReset();
+                            
                         }
                     }
             }  );
@@ -86,6 +88,7 @@ class Field extends Component {
         }
         
         if (this.state.begining) { // first click ( begining the game )
+            this.props.resetTimePerClickCount();
             this.props.clickCounter(); // recording how many clicks are made
             let spot = spotFinder(index, this.state.thisLevel); // calling the methodes to find all the spots for a particular LVL ( LVL ALGORITHM INICIALIZATION )
             let nextToClick = yellowBoxes(index, spot);  // finding next spots to click
@@ -182,7 +185,7 @@ class Field extends Component {
         this.setState({ 
                     begining: true, refresh: true, chosenTiles: [], clickedTile: [],
                     nowClicked: null, nextToClick: [], gameComplete: false, thisLevel: this.state.thisLevel + 1
-                }, () => {  this.props.currentLVL(this.state.thisLevel); }); // reseting local states and calling a function afther its all set
+                }, () => {  this.props.currentLVL(this.state.thisLevel); }); // reseting local states and calling a function afther its all set ( for tracking the current lvl )
         this.props.lifepointsIncrement();
     }
 
@@ -261,5 +264,5 @@ const mapStateToProps = ({ proces }) => {
 
 export default connect(mapStateToProps, { 
         unlockNextLVL, currentLVL, upisiRekordUStoridz, requestTimeValue, lifepointsIncrement,
-        lifepointsReset, clickCounter, requestTimePerClickValue, lifepointsDecrese, clickCounterReset
+        lifepointsReset, clickCounter, requestTimePerClickValue, lifepointsDecrese, clickCounterReset, resetTimePerClickCount
     })(Field);

@@ -10,7 +10,7 @@ export default class Game extends Component {
         return (
             <View style={{flex: 1}}>
                 <Field pickedLVL={this.props.pickedLVL} maxLevel={this.props.maxLevel} />
-                <Status pickedLVL={this.props.pickedLVL} reload={this.props.reload} />
+                <Status pickedLVL={this.props.pickedLVL} reload={this.props.reload}/>
                 <TouchableHighlight onPress={ () => { Actions.pick(); }} style={styles.quitButton}>
                     <Text style={styles.quit}>Exit</Text>
                 </TouchableHighlight>

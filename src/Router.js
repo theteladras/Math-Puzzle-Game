@@ -4,7 +4,6 @@ import Game from './Screens/Game'
 import Pick from './Screens/Pick'
 import Start from './Screens/Start'
 import Score from './Screens/Score'
-import CanvasComponent from './Screens/CanvasComponent'
 
 
 const RouterComponent = () => {

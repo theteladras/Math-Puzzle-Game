@@ -148,9 +148,10 @@ import {
         };
     };
 
-    export const requestTimePerClickValue = () => {
+    export const requestTimePerClickValue = (flag) => {
         return {
             type: REQTPC,
+            payload: flag
         };
     }
 

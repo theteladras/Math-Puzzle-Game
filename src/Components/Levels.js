@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { ScrollView, View, Text, TouchableHighlight, ActivityIndicator, FlatList } from 'react-native'
 import { Actions } from 'react-native-router-flux'
 import { connect } from 'react-redux'
-import { currentLVL } from '../Reactions'
+import { currentLVL, Rerender } from '../Reactions'
 import Config from '../Functions/Config.json'
 
 
@@ -21,7 +21,7 @@ class Levels extends Component {
 
 
     lvlPress(i) {
-        if (i+1 <= this.state.openLVL) { Actions.game({ pickedLVL: i+1, maxLevel: this.state.openLVL }); this.props.currentLVL(i+1);  }
+        if (i+1 <= this.state.openLVL) { Actions.game({ pickedLVL: i+1, maxLevel: this.state.openLVL }); this.props.currentLVL(i+1); this.props.Rerender(true);  }
     }
 
     renderLastBlock100(i, page) {
@@ -124,4 +124,4 @@ const mapStateToProps = ({ proces }) => {
     return { nivo };
   };
   
-  export default connect(mapStateToProps, { currentLVL })(Levels);
+  export default connect(mapStateToProps, { currentLVL, Rerender })(Levels);

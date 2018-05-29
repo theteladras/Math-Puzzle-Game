@@ -25,7 +25,7 @@ const INITIAL_STATE = {
     rerender: false,
     rekordi: {},
     flag: 1,
-    per_click_flag: 1,
+    per_click_flag: false,
     klika: 0,
     arr_klika_vreme: [],
   };
@@ -53,7 +53,7 @@ const INITIAL_STATE = {
       case FLAGTIME: 
         return { ...state, flag: state.flag + 1};
       case REQTPC: 
-        return { ...state, per_click_flag: state.per_click_flag + 1};
+        return { ...state, per_click_flag: action.payload};
       case CC: 
         return { ...state, klika: state.klika + 1};
       case CCR: 
