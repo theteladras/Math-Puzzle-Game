@@ -1,0 +1,16 @@
+export const PTS = 'points';
+export const LFP = 'life';
+export const LFPD = 'life_points_decrese';
+export const RLFP = 'reset_life';
+export const LVL = 'level';
+export const CLVL = 'currentLvl';
+export const TIME = 'stopwatch';
+export const RER = 'rerender';
+export const RECR = 'records_in_redux';
+export const RECS = 'records_in_storage';
+export const FLAGTIME = 'flag_for_time_value';
+export const CC = 'click_counter';
+export const CCR = 'click_counter_reset';
+export const TPC = 'time_per_click';
+export const RTPC = 'reset_time_per_click';
+export const REQTPC = 'request_time_per_click';
