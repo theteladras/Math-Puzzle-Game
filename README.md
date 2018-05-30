@@ -1,6 +1,6 @@
-# Project Title
+# TCGame
 
-TCGame, a job applycation project.
+A job applycation project.
 
 ## Getting Started
 
