@@ -18,7 +18,6 @@ class Status extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.klika == 1) { this.setState({ tick: 1 }) } // triggering the timer afther first click
         if (nextProps.rerender) {  // reseting time when starting the same level from the lvl pick screen
-            console.log('rerender part');
             this.setState({ sec: 0 });
             this.props.Rerender(false);
         }
@@ -38,7 +37,6 @@ class Status extends Component {
             });
         }
         if (nextProps.per_click_flag) { // triggered when the measured clicks start happening, for every click
-            console.log('ovde sam')
             this.props.timePerClickCount(this.state.sec); // recording time needed for every click
             this.props.requestTimePerClickValue(false);
         }
@@ -52,9 +50,6 @@ class Status extends Component {
     
 
     render() {
-        console.log('arr ', this.props.arr_klika_vreme);
-        console.log('ovaj nivo je ', this.props.trenutni_nivo);
-        console.log('per klik flag ', this.props.per_click_flag);
         return (
             <View>
                 <View style={styles.container}>

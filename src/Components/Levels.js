@@ -13,7 +13,6 @@ class Levels extends Component {
     state = { loading: true, openLVL: this.props.nivo };
 
     componentDidMount() {
-        console.log('bro ', this.props.nivo)
         if (this.props.nivo < Config[0]['startLevel'] ) {
             this.setState({ openLVL: Config[0]['startLevel'] });
         }

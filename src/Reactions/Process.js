@@ -51,7 +51,6 @@ import {
   };
 
   export const unlockNextLVL = (level, max_unlocked, reset) => {
-      console.log('bro2 ', level)
     if (max_unlocked < level + 1) {
         storage.save({  // save the unlocked level
             key: 'GameLevelStorage',   
@@ -110,7 +109,6 @@ import {
   };
 
   export const upisiRekordURedux = (rekordi) => {
-    console.log('rekordi ', rekordi);
       return {
         type: RECR,
         payload: rekordi,
@@ -168,7 +166,6 @@ import {
     };
 
     export const lifepointsDecrese = (num_of_unclicked) => {
-        console.log('minuse this ', num_of_unclicked)
         return {
             type: LFPD,
             payload: num_of_unclicked,
