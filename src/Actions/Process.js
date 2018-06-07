@@ -18,7 +18,7 @@ import {
     TPC,
     RTPC,
     REQTPC,
-  } from '../Reactions/types'
+  } from './types';
 
     export const storage = new Storage({
         size: 1000,

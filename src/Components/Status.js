@@ -6,7 +6,8 @@ import { Timer,
     resetTimePerClickCount, 
     timePerClickCount, 
     requestTimePerClickValue, 
-    Rerender } from '../Reactions'
+    Rerender } from '../Actions'
+import styles from '../Styles/StatusStyle'
 
 
 class Status extends Component {
@@ -16,36 +17,39 @@ class Status extends Component {
         this.interval = setInterval(() => this.setState({ sec: this.state.sec + this.state.tick }), 1000 );
     }
     componentWillReceiveProps(nextProps) {
-        if (nextProps.klika == 1) { this.setState({ tick: 1 }) } // triggering the timer afther first click
-        if (nextProps.rerender) {  // reseting time when starting the same level from the lvl pick screen
+        // triggering the timer tick afther first click
+        if (nextProps.klika == 1) { this.setState({ tick: 1 }) } 
+        // rerender component on request
+        if (nextProps.rerender) {  
             this.setState({ sec: 0 });
             this.props.Rerender(false);
         }
-        if (nextProps.flag != this.props.flag) {  // saving the result time in redux
+        // saving the result time in redux
+        if (nextProps.flag != this.props.flag) {  
             this.props.Timer(this.state.sec);
         }
-        if (nextProps.nivo != this.props.nivo || nextProps.trenutni_nivo != this.props.trenutni_nivo) {  // timer reseting when the conditions are met
+        // reseting counters when the current level has changed
+        if (nextProps.nivo != this.props.nivo || nextProps.trenutni_nivo != this.props.trenutni_nivo) {  
             this.setState({ sec: 0, tick: 0 });
             this.props.clickCounterReset();
             this.props.resetTimePerClickCount(); // reseting the records for time per click in redux and seting it to []
         }
-        if (nextProps.arr_klika_vreme == []) {  // reseting time state when the lvl starts (etc. afther lvl repeat)
+        // safety reseting counters when the lvl starts (etc. afther lvl repeat)
+        if (nextProps.arr_klika_vreme == []) {  
             this.setState({ sec: 0 }, () => {
                 this.props.clickCounterReset();
-                this.props.resetTimePerClickCount();
-                this.props.Timer(this.state.sec);
             });
         }
         if (nextProps.per_click_flag) { // triggered when the measured clicks start happening, for every click
             this.props.timePerClickCount(this.state.sec); // recording time needed for every click
             this.props.requestTimePerClickValue(false);
         }
-        if (nextProps.zivot < this.props.zivot) { // when out of lifes
-            this.setState({ sec: 0 });
-            this.props.resetTimePerClickCount();
+        // when the amount of lifes changes reset the counters
+        if (nextProps.zivot != this.props.zivot) { 
+            this.setState({ sec: 0, tick: 0 });
+            this.props.clickCounterReset();
             this.props.Timer(this.state.sec);
         }
-        
     }
     
 
@@ -73,17 +77,6 @@ class Status extends Component {
     }
     componentWillUnmount() {
         clearInterval(this.interval);
-    }
-}
-
-const styles = {
-    container: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    },
-    text: {
-        fontSize: 16,
-        fontFamily: 'sans-serif'
     }
 }
 

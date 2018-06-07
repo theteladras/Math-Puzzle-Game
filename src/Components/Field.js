@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { View, Dimensions, TouchableOpacity, Text, Button, BackHandler } from 'react-native'
-import _ from 'lodash'
+import { View, TouchableOpacity, Text, Button, BackHandler } from 'react-native'
+import { includes, difference, compact } from 'lodash'
 import Modal from 'react-native-modal'
 import { Actions } from 'react-native-router-flux'
 import { connect } from 'react-redux'
@@ -14,14 +14,16 @@ import { unlockNextLVL,
         requestTimePerClickValue,
         lifepointsDecrese,
         clickCounterReset,
-        resetTimePerClickCount } from '../Reactions'
+        resetTimePerClickCount,
+        Rerender } from '../Actions'
 import { spotFinder, yellowBoxes } from '../Functions/levelGenerator'
 import ModalComplete from './ModalComplete'
 import ModalFail from './ModalFail'
 import ModalGameOver from './ModalGameOver'
 import Config from '../Functions/Config.json'
+import styles from '../Styles/FieldStyle'
 
-const {height, width} = Dimensions.get('window')
+
 var foo = new Array(10);
 foo.fill({}, 0, 10); // aray od 10 objects, witch will be used to map trough, and generate the field
 
@@ -42,52 +44,57 @@ class Field extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        
         if (nextProps.vreme_zavrsetka != this.props.vreme_zavrsetka && this.state.sendScore ) {
             this.props.upisiRekordUStoridz(this.state.thisLevel, nextProps.vreme_zavrsetka, this.props.rekordi); // saving results of this level and past results when th
             this.setState({ sendScore: false });
         }
     }
-
+    //hadling hardware back button press with a given functionality
     _onBackClicked = () => {
         Actions.pick({ rerender: true });
         return true;
       } 
-
-    pressTile(index) {  //trigger for the tile press
-        if (_.includes(this.state.nextToClick, index) && this.state.nextToClick.length > 0) { // lvl progress afther first click
+    //trigger when a tile is pressed
+    pressTile(index) {  
+        // lvl progress afther first click
+        if (includes(this.state.nextToClick, index) && this.state.nextToClick.length > 0) {
             this.props.clickCounter(); // recording how many clicks are made
             this.props.requestTimePerClickValue(true); // geting the time per click value
             let nextToClick;
             if (this.state.clickedTile.length == this.state.chosenTiles.length) {
                 nextToClick = [];
             }
+            // finding next spots to click ( yellow tiles )
             else {
-                nextToClick = yellowBoxes(index, this.state.chosenTiles); // finding next spots to click
+                nextToClick = yellowBoxes(index, this.state.chosenTiles);
             }
             this.setState(prevState => ({
                 clickedTile: [...prevState.clickedTile, index],
                 nextToClick,
             }), () => { 
-                if (_.difference(this.state.nextToClick, this.state.clickedTile).length == 0 && this.state.clickedTile.length == this.state.chosenTiles.length + 1 )
-                    { this.setState({ gameComplete: true, sendScore: true }); this.props.requestTimeValue(); } // triggered afther a round is successfully complete
-                else if (_.difference(this.state.nextToClick, this.state.clickedTile).length == 0 && this.state.clickedTile.length != this.state.chosenTiles.length + 1) 
-                    { 
-                        if (this.props.zivot - ( this.state.chosenTiles.length - this.state.clickedTile.length ) < 1) {  // when a player looses all life, this will trigger
+                // triggered afther a round is successfully complete
+                if (difference(this.state.nextToClick, this.state.clickedTile).length == 0 && this.state.clickedTile.length == this.state.chosenTiles.length + 1 )
+                    { this.setState({ gameComplete: true, sendScore: true }); this.props.requestTimeValue(); } 
+                // for cases other than successfull lvl complete
+                else if (difference(this.state.nextToClick, this.state.clickedTile).length == 0 && this.state.clickedTile.length != this.state.chosenTiles.length + 1) 
+                    {
+                        // when a player looses all life, this will trigger 
+                        if (this.props.zivot - ( this.state.chosenTiles.length - this.state.clickedTile.length ) < 1) {  
                             this.setState({ gameOver: true });
                         }
-                        else {  // when a player looses a round but has still life remaining
+                        // when a player looses a round but has still life remaining
+                        else {  
                             this.setState({ gameFail: true });
                             this.props.lifepointsDecrese(( this.state.chosenTiles.length - this.state.clickedTile.length ));
                             this.props.clickCounterReset();
                             
                         }
                     }
-            }  );
+            });
             
         }
-        
-        if (this.state.begining) { // first click ( begining the game )
+        // first click ( begining the game ) flag
+        if (this.state.begining) { 
             this.props.resetTimePerClickCount();
             this.props.clickCounter(); // recording how many clicks are made
             let spot = spotFinder(index, this.state.thisLevel); // calling the methodes to find all the spots for a particular LVL ( LVL ALGORITHM INICIALIZATION )
@@ -96,115 +103,117 @@ class Field extends Component {
                 clickedTile: [index],
                 begining: false,
                 nowClicked: index,
-                chosenTiles: _.compact(spot),
+                chosenTiles: compact(spot),
                 nextToClick,
             });
         }
     }
-
-    renderTiles() { // maping through the array, and generating the field 10x10 spots
+    // maping through the array, and generating ( rendering ) the field 10x10 spots
+    renderTiles() { 
         return foo.map((none, i) => {
             return (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                    <TouchableOpacity key={10*i} onPress={this.pressTile.bind(this, 10*i)} style={[  
+                <View style={styles.fieldRow} key={'row'+i}>
+                    <TouchableOpacity key={'column'+(10*i)} onPress={this.pressTile.bind(this, 10*i)} style={[  
                         styles.parts,
-                        _.includes(this.state.chosenTiles, 10*i) ? styles.chosen : undefined,
-                        _.includes(this.state.nextToClick, 10*i) ? styles.nextToClick : undefined,
-                        _.includes(this.state.clickedTile, 10*i) ? styles.clicked : undefined  
+                        includes(this.state.chosenTiles, 10*i) ? styles.chosen : undefined,
+                        includes(this.state.nextToClick, 10*i) ? styles.nextToClick : undefined,
+                        includes(this.state.clickedTile, 10*i) ? styles.clicked : undefined  
                     ]}  />
-                    <TouchableOpacity key={1+10*i} onPress={this.pressTile.bind(this, 1+10*i)} style={[  
+                    <TouchableOpacity key={'column'+(1+10*i)} onPress={this.pressTile.bind(this, 1+10*i)} style={[  
                         styles.parts,
-                        _.includes(this.state.chosenTiles, 1+10*i) ? styles.chosen : undefined,
-                        _.includes(this.state.nextToClick, 1+10*i) ? styles.nextToClick : undefined,
-                        _.includes(this.state.clickedTile, 1+10*i) ? styles.clicked : undefined  
+                        includes(this.state.chosenTiles, 1+10*i) ? styles.chosen : undefined,
+                        includes(this.state.nextToClick, 1+10*i) ? styles.nextToClick : undefined,
+                        includes(this.state.clickedTile, 1+10*i) ? styles.clicked : undefined  
                     ]}  />
-                    <TouchableOpacity key={2+10*i} onPress={this.pressTile.bind(this, 2+10*i)} style={[  
+                    <TouchableOpacity key={'column'+(2+10*i)} onPress={this.pressTile.bind(this, 2+10*i)} style={[  
                         styles.parts,
-                        _.includes(this.state.chosenTiles, 2+10*i) ? styles.chosen : undefined,
-                        _.includes(this.state.nextToClick, 2+10*i) ? styles.nextToClick : undefined,
-                        _.includes(this.state.clickedTile, 2+10*i) ? styles.clicked : undefined  
+                        includes(this.state.chosenTiles, 2+10*i) ? styles.chosen : undefined,
+                        includes(this.state.nextToClick, 2+10*i) ? styles.nextToClick : undefined,
+                        includes(this.state.clickedTile, 2+10*i) ? styles.clicked : undefined  
                     ]}  />
-                    <TouchableOpacity key={3+10*i} onPress={this.pressTile.bind(this, 3+10*i)} style={[  
+                    <TouchableOpacity key={'column'+(3+10*i)} onPress={this.pressTile.bind(this, 3+10*i)} style={[  
                         styles.parts,
-                        _.includes(this.state.chosenTiles, 3+10*i) ? styles.chosen : undefined,
-                        _.includes(this.state.nextToClick, 3+10*i) ? styles.nextToClick : undefined,
-                        _.includes(this.state.clickedTile, 3+10*i) ? styles.clicked : undefined  
+                        includes(this.state.chosenTiles, 3+10*i) ? styles.chosen : undefined,
+                        includes(this.state.nextToClick, 3+10*i) ? styles.nextToClick : undefined,
+                        includes(this.state.clickedTile, 3+10*i) ? styles.clicked : undefined  
                     ]}  />
-                    <TouchableOpacity key={4+10*i} onPress={this.pressTile.bind(this, 4+10*i)} style={[  
+                    <TouchableOpacity key={'column'+(4+10*i)} onPress={this.pressTile.bind(this, 4+10*i)} style={[  
                         styles.parts,
-                        _.includes(this.state.chosenTiles, 4+10*i) ? styles.chosen : undefined,
-                        _.includes(this.state.nextToClick, 4+10*i) ? styles.nextToClick : undefined,
-                        _.includes(this.state.clickedTile, 4+10*i) ? styles.clicked : undefined  
+                        includes(this.state.chosenTiles, 4+10*i) ? styles.chosen : undefined,
+                        includes(this.state.nextToClick, 4+10*i) ? styles.nextToClick : undefined,
+                        includes(this.state.clickedTile, 4+10*i) ? styles.clicked : undefined  
                     ]}  />
-                    <TouchableOpacity key={5+10*i} onPress={this.pressTile.bind(this, 5+10*i)} style={[  
+                    <TouchableOpacity key={'column'+(5+10*i)} onPress={this.pressTile.bind(this, 5+10*i)} style={[  
                         styles.parts,
-                        _.includes(this.state.chosenTiles, 5+10*i) ? styles.chosen : undefined,
-                        _.includes(this.state.nextToClick, 5+10*i) ? styles.nextToClick : undefined,
-                        _.includes(this.state.clickedTile, 5+10*i) ? styles.clicked : undefined  
+                        includes(this.state.chosenTiles, 5+10*i) ? styles.chosen : undefined,
+                        includes(this.state.nextToClick, 5+10*i) ? styles.nextToClick : undefined,
+                        includes(this.state.clickedTile, 5+10*i) ? styles.clicked : undefined  
                     ]}  />
-                    <TouchableOpacity key={6+10*i} onPress={this.pressTile.bind(this, 6+10*i)} style={[  
+                    <TouchableOpacity key={'column'+(6+10*i)} onPress={this.pressTile.bind(this, 6+10*i)} style={[  
                         styles.parts,
-                        _.includes(this.state.chosenTiles, 6+10*i) ? styles.chosen : undefined,
-                        _.includes(this.state.nextToClick, 6+10*i) ? styles.nextToClick : undefined,
-                        _.includes(this.state.clickedTile, 6+10*i) ? styles.clicked : undefined  
+                        includes(this.state.chosenTiles, 6+10*i) ? styles.chosen : undefined,
+                        includes(this.state.nextToClick, 6+10*i) ? styles.nextToClick : undefined,
+                        includes(this.state.clickedTile, 6+10*i) ? styles.clicked : undefined  
                     ]}  />
-                    <TouchableOpacity key={7+10*i} onPress={this.pressTile.bind(this, 7+10*i)} style={[  
+                    <TouchableOpacity key={'column'+(7+10*i)} onPress={this.pressTile.bind(this, 7+10*i)} style={[  
                         styles.parts,
-                        _.includes(this.state.chosenTiles, 7+10*i) ? styles.chosen : undefined,
-                        _.includes(this.state.nextToClick, 7+10*i) ? styles.nextToClick : undefined,
-                        _.includes(this.state.clickedTile, 7+10*i) ? styles.clicked : undefined  
+                        includes(this.state.chosenTiles, 7+10*i) ? styles.chosen : undefined,
+                        includes(this.state.nextToClick, 7+10*i) ? styles.nextToClick : undefined,
+                        includes(this.state.clickedTile, 7+10*i) ? styles.clicked : undefined  
                     ]}  />
-                    <TouchableOpacity key={8+10*i} onPress={this.pressTile.bind(this, 8+10*i)} style={[  
+                    <TouchableOpacity key={'column'+(8+10*i)} onPress={this.pressTile.bind(this, 8+10*i)} style={[  
                         styles.parts,
-                        _.includes(this.state.chosenTiles, 8+10*i) ? styles.chosen : undefined,
-                        _.includes(this.state.nextToClick, 8+10*i) ? styles.nextToClick : undefined,
-                        _.includes(this.state.clickedTile, 8+10*i) ? styles.clicked : undefined  
+                        includes(this.state.chosenTiles, 8+10*i) ? styles.chosen : undefined,
+                        includes(this.state.nextToClick, 8+10*i) ? styles.nextToClick : undefined,
+                        includes(this.state.clickedTile, 8+10*i) ? styles.clicked : undefined  
                     ]}  />
-                    <TouchableOpacity key={9+10*i} onPress={this.pressTile.bind(this, 9+10*i)} style={[  
+                    <TouchableOpacity key={'column'+(9+10*i)} onPress={this.pressTile.bind(this, 9+10*i)} style={[  
                         styles.parts,
-                        _.includes(this.state.chosenTiles, 9+10*i) ? styles.chosen : undefined,
-                        _.includes(this.state.nextToClick, 9+10*i) ? styles.nextToClick : undefined,
-                        _.includes(this.state.clickedTile, 9+10*i) ? styles.clicked : undefined  
+                        includes(this.state.chosenTiles, 9+10*i) ? styles.chosen : undefined,
+                        includes(this.state.nextToClick, 9+10*i) ? styles.nextToClick : undefined,
+                        includes(this.state.clickedTile, 9+10*i) ? styles.clicked : undefined  
                     ]}  />
                 </View>
             );
         });
     }
-
+    // go to level select menu ( when a level is successfully completed )
     modalBtnNo() {
-        this.props.unlockNextLVL(this.state.thisLevel, this.props.maxLevel);
+        this.props.unlockNextLVL(this.state.thisLevel, this.props.nivo);
         this.setState({
                 begining: true, refresh: true, chosenTiles: [], clickedTile: [],
                 nowClicked: null, nextToClick: [], gameComplete: false, thisLevel: this.state.thisLevel + 1
          }); // reseting local states
         Actions.pick({ rerender: true });
+        this.props.lifepointsIncrement();
     }
-
+    // go to next level ( when a level is successfully completed )
     modalBtnYes() {
-        this.props.unlockNextLVL(this.state.thisLevel, this.props.maxLevel);
+        this.props.unlockNextLVL(this.state.thisLevel, this.props.nivo);
         this.setState({ 
                     begining: true, refresh: true, chosenTiles: [], clickedTile: [],
                     nowClicked: null, nextToClick: [], gameComplete: false, thisLevel: this.state.thisLevel + 1
                 }, () => {  this.props.currentLVL(this.state.thisLevel); }); // reseting local states and calling a function afther its all set ( for tracking the current lvl )
         this.props.lifepointsIncrement();
     }
-
+    // go to level select menu ( when the player loose a game but has life remaining )
     failModalBtnNo() {
         this.setState({
             begining: true, refresh: true, chosenTiles: [], clickedTile: [],
-            nowClicked: null, nextToClick: [], gameFail: false,
+            nowClicked: null, nextToClick: [], gameFail: false, thisLevel: this.state.thisLevel
         }); // reseting local states
         Actions.pick({ rerender: true });
     }
-
+    // repeat level ( when the player loose a game but has life remaining )
     failModalBtnYes() {
+        this.props.Rerender(true);
         this.setState({ 
             begining: true, refresh: true, chosenTiles: [], clickedTile: [],
-            nowClicked: null, nextToClick: [], gameFail: false,
+            nowClicked: null, nextToClick: [], gameFail: false, thisLevel: this.state.thisLevel
         }); // reseting local states
         Actions.game({ reload: true, pickedLVL: this.state.thisLevel });
     }
-
+    // poping up modal when the player looses all life
     ModalGameOverBtn() {
         this.props.unlockNextLVL(null, null, 1);
         this.props.lifepointsReset();
@@ -233,29 +242,6 @@ class Field extends Component {
     }
 }
 
-const styles = {
-    parts: {
-        width: width/10,
-        height: 40,
-        backgroundColor: '#b5b5b5',
-        borderWidth: 0.5,
-        borderColor: '#c3c3c3',
-    },
-    field: {
-        borderBottomWidth: 10,
-        borderColor: '#01a80a',
-    },
-    clicked: {
-        backgroundColor: '#4286f4',
-    },
-    chosen: {
-        backgroundColor: '#01a80a',
-    },
-    nextToClick: {
-        backgroundColor: '#dbd00d',
-    },
-}
-
 const mapStateToProps = ({ proces }) => {
     const { nivo, vreme_zavrsetka, rekordi, zivot} = proces;
   
@@ -263,6 +249,6 @@ const mapStateToProps = ({ proces }) => {
   };
 
 export default connect(mapStateToProps, { 
-        unlockNextLVL, currentLVL, upisiRekordUStoridz, requestTimeValue, lifepointsIncrement,
+        unlockNextLVL, currentLVL, upisiRekordUStoridz, requestTimeValue, lifepointsIncrement, Rerender,
         lifepointsReset, clickCounter, requestTimePerClickValue, lifepointsDecrese, clickCounterReset, resetTimePerClickCount
     })(Field);
