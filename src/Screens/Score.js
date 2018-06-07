@@ -8,7 +8,7 @@ class Score extends Component {
     state = { rec: [], showBlock: null }
 
     componentDidMount() {
-        this.setState({ rec: this.props.rekordi })
+        this.setState({ rec: this.props.all_records })
     }
     // styling number how it shows up on screen
     renderNumber = (x, secondOption) => { 
@@ -37,7 +37,7 @@ class Score extends Component {
     }
     // mapping through all results of one stage and setting them up (drop down)
     renderOtherScores = (node) => {  
-        return this.props.rekordi[node].map((subnode, i) => {
+        return this.props.all_records[node].map((subnode, i) => {
             return (
                 <View style={styles.dropDown} key={'OtherScore' + i}>
                     <Text style={[{ color: 'transparent' }, styles.text]}>11111</Text>
@@ -49,15 +49,15 @@ class Score extends Component {
     }
 
     renderRec() { // maping through all the scores and setting up rows
-            if (this.props.rekordi) {
-                return Object.keys(this.props.rekordi).map( (node, i) => {
+            if (this.props.all_records) {
+                return Object.keys(this.props.all_records).map( (node, i) => {
                     return (
                         <View key={'FullScore' + i}>
                             <TouchableHighlight onPress={this.showThisScore.bind(this, node)}>
                                 <View style={styles.rowContainers}>
                                     <Text style={styles.text}>{node < 10 ? this.renderNumber(node, 1) : node }<Text style={{ color: 'transparent' }}>11</Text></Text>
-                                    <Text style={styles.secText}>{min(this.props.rekordi[node])}<Text style={{ fontSize: 12 }}>sec</Text></Text>
-                                    <Text style={styles.text}>{this.props.rekordi[node].length < 10 ? this.renderNumber(this.props.rekordi[node].length) : this.props.rekordi[node].length }<Text style={{ color: 'transparent' }}>11</Text></Text>
+                                    <Text style={styles.secText}>{min(this.props.all_records[node])}<Text style={{ fontSize: 12 }}>sec</Text></Text>
+                                    <Text style={styles.text}>{this.props.all_records[node].length < 10 ? this.renderNumber(this.props.all_records[node].length) : this.props.all_records[node].length }<Text style={{ color: 'transparent' }}>11</Text></Text>
                                 </View>
                             </TouchableHighlight>
                             <View>
@@ -85,7 +85,7 @@ class Score extends Component {
                         <Text style={styles.label}>Time</Text>
                         <Text style={styles.label}>Times completed</Text>
                     </View>
-                    { this.props.rekordi ? this.renderRec() : undefined }
+                    { this.props.all_records ? this.renderRec() : undefined }
                 </ScrollView>
             </View>
         );

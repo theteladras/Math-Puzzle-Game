@@ -6,7 +6,7 @@ import { Actions } from 'react-native-router-flux'
 import { connect } from 'react-redux'
 import { unlockNextLVL, 
         currentLVL,
-        upisiRekordUStoridz, 
+        writeRecordInStorage, 
         requestTimeValue, 
         lifepointsIncrement, 
         lifepointsReset,
@@ -44,8 +44,8 @@ class Field extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.vreme_zavrsetka != this.props.vreme_zavrsetka && this.state.sendScore ) {
-            this.props.upisiRekordUStoridz(this.state.thisLevel, nextProps.vreme_zavrsetka, this.props.rekordi); // saving results of this level and past results when th
+        if (nextProps.time_of_finish != this.props.time_of_finish && this.state.sendScore ) {
+            this.props.writeRecordInStorage(this.state.thisLevel, nextProps.time_of_finish, this.props.all_records); // saving results of this level and past results when th
             this.setState({ sendScore: false });
         }
     }
@@ -79,7 +79,7 @@ class Field extends Component {
                 else if (difference(this.state.nextToClick, this.state.clickedTile).length == 0 && this.state.clickedTile.length != this.state.chosenTiles.length + 1) 
                     {
                         // when a player looses all life, this will trigger 
-                        if (this.props.zivot - ( this.state.chosenTiles.length - this.state.clickedTile.length ) < 1) {  
+                        if (this.props.my_life_points - ( this.state.chosenTiles.length - this.state.clickedTile.length - 1 ) < 1) {  
                             this.setState({ gameOver: true });
                         }
                         // when a player looses a round but has still life remaining
@@ -179,7 +179,7 @@ class Field extends Component {
     }
     // go to level select menu ( when a level is successfully completed )
     modalBtnNo() {
-        this.props.unlockNextLVL(this.state.thisLevel, this.props.nivo);
+        this.props.unlockNextLVL(this.state.thisLevel, this.props.level_caught);
         this.setState({
                 begining: true, refresh: true, chosenTiles: [], clickedTile: [],
                 nowClicked: null, nextToClick: [], gameComplete: false, thisLevel: this.state.thisLevel + 1
@@ -189,7 +189,7 @@ class Field extends Component {
     }
     // go to next level ( when a level is successfully completed )
     modalBtnYes() {
-        this.props.unlockNextLVL(this.state.thisLevel, this.props.nivo);
+        this.props.unlockNextLVL(this.state.thisLevel, this.props.level_caught);
         this.setState({ 
                     begining: true, refresh: true, chosenTiles: [], clickedTile: [],
                     nowClicked: null, nextToClick: [], gameComplete: false, thisLevel: this.state.thisLevel + 1
@@ -243,12 +243,12 @@ class Field extends Component {
 }
 
 const mapStateToProps = ({ proces }) => {
-    const { nivo, vreme_zavrsetka, rekordi, zivot} = proces;
+    const { level_caught, time_of_finish, all_records, my_life_points} = proces;
   
-    return { nivo, vreme_zavrsetka, rekordi, zivot };
+    return { level_caught, time_of_finish, all_records, my_life_points };
   };
 
 export default connect(mapStateToProps, { 
-        unlockNextLVL, currentLVL, upisiRekordUStoridz, requestTimeValue, lifepointsIncrement, Rerender,
+        unlockNextLVL, currentLVL, writeRecordInStorage, requestTimeValue, lifepointsIncrement, Rerender,
         lifepointsReset, clickCounter, requestTimePerClickValue, lifepointsDecrese, clickCounterReset, resetTimePerClickCount
     })(Field);

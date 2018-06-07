@@ -18,7 +18,7 @@ class Status extends Component {
     }
     componentWillReceiveProps(nextProps) {
         // triggering the timer tick afther first click
-        if (nextProps.klika == 1) { this.setState({ tick: 1 }) } 
+        if (nextProps.clicks_count == 1) { this.setState({ tick: 1 }) } 
         // rerender component on request
         if (nextProps.rerender) {  
             this.setState({ sec: 0 });
@@ -29,23 +29,24 @@ class Status extends Component {
             this.props.Timer(this.state.sec);
         }
         // reseting counters when the current level has changed
-        if (nextProps.nivo != this.props.nivo || nextProps.trenutni_nivo != this.props.trenutni_nivo) {  
+        if (nextProps.level_caught != this.props.level_caught || nextProps.current_level != this.props.current_level) {  
             this.setState({ sec: 0, tick: 0 });
             this.props.clickCounterReset();
             this.props.resetTimePerClickCount(); // reseting the records for time per click in redux and seting it to []
         }
         // safety reseting counters when the lvl starts (etc. afther lvl repeat)
-        if (nextProps.arr_klika_vreme == []) {  
+        if (nextProps.arr_time_per_clicks == []) {  
             this.setState({ sec: 0 }, () => {
                 this.props.clickCounterReset();
             });
         }
-        if (nextProps.per_click_flag) { // triggered when the measured clicks start happening, for every click
+        // triggered when the measured clicks start happening, for every click
+        if (nextProps.per_click_flag) {
             this.props.timePerClickCount(this.state.sec); // recording time needed for every click
             this.props.requestTimePerClickValue(false);
         }
         // when the amount of lifes changes reset the counters
-        if (nextProps.zivot != this.props.zivot) { 
+        if (nextProps.my_life_points != this.props.my_life_points) { 
             this.setState({ sec: 0, tick: 0 });
             this.props.clickCounterReset();
             this.props.Timer(this.state.sec);
@@ -61,29 +62,29 @@ class Status extends Component {
                         Time: {this.state.sec}
                     </Text>
                     <Text style={styles.text}>
-                        Lives: {this.props.zivot}
+                        Lives: {this.props.my_life_points}
                     </Text>
                 </View>
                 <View style={styles.container}>
                     <Text style={styles.text}>
-                        Level: {this.props.trenutni_nivo}
+                        Level: {this.props.current_level}
                     </Text>
                     <Text style={styles.text}>
-                        Clicks: {this.props.klika}
+                        Clicks: {this.props.clicks_count}
                     </Text>
                 </View>
             </View>
         );
     }
     componentWillUnmount() {
-        clearInterval(this.interval);
+        clearInterval(this.interval);  // clearing the component timer
     }
 }
 
 const mapStateToProps = ({ proces }) => {
-    const { nivo, zivot, trenutni_nivo, rerender, flag, klika, arr_klika_vreme, per_click_flag } = proces;
+    const { level_caught, my_life_points, current_level, rerender, flag, clicks_count, arr_time_per_clicks, per_click_flag } = proces;
   
-    return { nivo, zivot, trenutni_nivo, rerender, flag, klika, arr_klika_vreme, per_click_flag };
+    return { level_caught, my_life_points, current_level, rerender, flag, clicks_count, arr_time_per_clicks, per_click_flag };
   };
 
 export default connect(mapStateToProps, 

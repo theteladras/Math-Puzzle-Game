@@ -11,11 +11,11 @@ var foo = new Array(5);
 foo.fill({}, 0, 5);
 
 class Levels extends Component {
-    state = { loading: true, openLVL: this.props.nivo };
+    state = { loading: true, openLVL: this.props.level_caught };
 
     componentDidMount() {
         // checking for the level in the config file ( if the value from the config file is grater than the achieved lvl, the value ffrom the config will be set as the max unlocked lvl )
-        if (this.props.nivo < Config[0]['startLevel'] ) {
+        if (this.props.level_caught < Config[0]['startLevel'] ) {
             this.setState({ openLVL: Config[0]['startLevel'] });
         }
     }
@@ -28,7 +28,8 @@ class Levels extends Component {
     renderLastBlock100 = (i, page) => {
         if (!(page == 4 && i == 4)) {
             return (
-                <TouchableHighlight key={'column'+4*i+4} 
+                <TouchableHighlight key={'column'+4*i+4}
+                    underlayColor="darkgreen"  
                     style={[
                         styles.touchableStyle, 
                         4*i+4+this.props.page*20 > this.state.openLVL ? { backgroundColor: '#36843a' } : undefined ]} 
@@ -48,6 +49,7 @@ class Levels extends Component {
             return (
                 <View style={styles.renderLevelsStyle} key={'lvlNum'+i}>
                     <TouchableHighlight key={'column'+4*i+1} 
+                        underlayColor="darkgreen" 
                         style={[
                             styles.touchableStyle, 
                             4*i+1+this.props.page*20 > this.state.openLVL ? { backgroundColor: '#36843a' } : undefined ]} 
@@ -56,6 +58,7 @@ class Levels extends Component {
                             <Text style={styles.lvlNumber}>{4*i+1+this.props.page*20}</Text>
                     </TouchableHighlight>
                     <TouchableHighlight key={'column'+4*i+2} 
+                        underlayColor="darkgreen" 
                         style={[
                             styles.touchableStyle, 
                             4*i+2+this.props.page*20 > this.state.openLVL ? { backgroundColor: '#36843a' } : undefined ]} 
@@ -63,7 +66,8 @@ class Levels extends Component {
                     >
                             <Text style={styles.lvlNumber}>{4*i+2+this.props.page*20}</Text>
                     </TouchableHighlight>
-                    <TouchableHighlight key={'column'+4*i+3} 
+                    <TouchableHighlight key={'column'+4*i+3}
+                        underlayColor="darkgreen" 
                         style={[
                             styles.touchableStyle, 
                             4*i+3+this.props.page*20 > this.state.openLVL ? { backgroundColor: '#36843a' } : undefined ]} 
@@ -87,9 +91,9 @@ class Levels extends Component {
 }
 
 const mapStateToProps = ({ proces }) => {
-    const { nivo } = proces;
+    const { level_caught } = proces;
   
-    return { nivo };
+    return { level_caught };
   };
   
   export default connect(mapStateToProps, { currentLVL, Rerender })(Levels);

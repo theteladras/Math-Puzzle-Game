@@ -15,13 +15,16 @@ const styles = {
     },
     text: {
         top: -50,
+        marginTop: 20,
         marginBottom: 15,
         fontSize: 38,
-        padding: 5,
         color: '#50aaff',
         fontWeight: '900',
         alignSelf: 'center',
         fontFamily: 'serif',
+        width: '100%',
+        backgroundColor: 'rgba(50,50,50,0.3)',
+        textAlign: 'center'
     },
     backgroundImage: {
         width: '100%', 
@@ -37,7 +40,6 @@ const styles = {
         marginHorizontal: 100,
         borderRadius: 6,
         overflow: 'hidden',
-
     },
     touchableBtnStyle: {
             width: 120, 

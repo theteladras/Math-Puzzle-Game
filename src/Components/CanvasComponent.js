@@ -8,7 +8,7 @@ const {height, width} = Dimensions.get('window');
 
 
 class CanvasComponent extends Component {
-  state = { arr: this.props.arr_klika_vreme.reverse() }
+  state = { arr: this.props.arr_time_per_clicks.reverse() }
   
   handleCanvas(canvas) {
     // check if canvase in use (error handling)
@@ -119,7 +119,7 @@ class CanvasComponent extends Component {
 
   // rendering canvas if the arr contains results
   renderCanvas() {
-    if (this.props.arr_klika_vreme) {
+    if (this.props.arr_time_per_clicks) {
       return (
         <Canvas ref={this.handleCanvas.bind(this)}/>
       );
@@ -136,9 +136,9 @@ class CanvasComponent extends Component {
 }
 
 const mapStateToProps = ({ proces }) => {
-  const { arr_klika_vreme } = proces;
+  const { arr_time_per_clicks } = proces;
 
-  return { arr_klika_vreme };
+  return { arr_time_per_clicks };
 };
 
 export default connect(mapStateToProps, null)(CanvasComponent);

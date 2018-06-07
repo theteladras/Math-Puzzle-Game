@@ -1,67 +1,68 @@
 import {
-	PTS,
-	LFP,
-	LFPD,
-	LVL,
-	CLVL,
+	POINTS,
+	LIFEPOINTS,
+	LIFEPOINTSDECRESE,
+	RESETLIFEPOINTS,
+	LEVEL,
+	CURRENTLEVEL,
 	TIME,
-	RER,
-	RECR,
+	RERENDER,
+	RECORDSINREDUX,
+	RECORDSINSTORAGE,
 	FLAGTIME,
-	RLFP,
-	CC,
-	CCR,
-	TPC,
-	RTPC,
-	REQTPC,
+	CLICKCOUNTER,
+	CLICKCOUNTERRESET,
+	TIMEPERCLICK,
+	RESETTIMEPERCLICK,
+	REQUESTTIMEPERCLICK,
 } from '../Actions/types';
 
 const INITIAL_STATE = {
-	skor: 0,
-	zivot: 1,
-	nivo: 0,
-	trenutni_nivo: null,
-	vreme_zavrsetka: 0,
+	my_life_points: 1,
+	level_caught: 0,
+	current_level: null,
+	time_of_finish: 0,
 	rerender: false,
-	rekordi: {},
+	all_records: {},
+	records_saved: 'Not Saved',
 	flag: 1,
 	per_click_flag: false,
-	klika: 0,
-	arr_klika_vreme: [],
+	clicks_count: 0,
+	arr_time_per_clicks: [],
 };
   
 export default (state = INITIAL_STATE, action) => {
 	switch (action.type) {
-	case PTS:
-		return { ...state, skor: action.payload };
-	case LFP:
-		return { ...state, zivot: state.zivot + 1  };
-	case LFPD:
-		return { ...state, zivot: state.zivot - action.payload  };
-	case RLFP:
-		return { ...state, zivot: 1 };
-	case LVL:
-		return { ...state, nivo: action.payload  };
-	case CLVL:
-		return { ...state, trenutni_nivo: action.payload };
+	case LIFEPOINTS:
+		return { ...state, my_life_points: state.my_life_points + 1  };
+	case LIFEPOINTSDECRESE:
+		return { ...state, my_life_points: state.my_life_points - action.payload - 1  };
+	case RESETLIFEPOINTS:
+		return { ...state, my_life_points: 1 };
+	case LEVEL:
+		return { ...state, level_caught: action.payload  };
+	case CURRENTLEVEL:
+		return { ...state, current_level: action.payload };
 	case TIME: 
-		return { ...state, vreme_zavrsetka: action.payload };
-	case RER: 
+		return { ...state, time_of_finish: action.payload };
+	case RERENDER: 
 		return { ...state, rerender: action.payload};
-	case RECR: 
-		return { ...state, rekordi: action.payload};
+	case RECORDSINREDUX: 
+		return { ...state, all_records: action.payload};
+	case RECORDSINSTORAGE: 
+		return { ...state, records_saved: 'Saved'};
 	case FLAGTIME: 
 		return { ...state, flag: state.flag + 1};
-	case REQTPC: 
+	case REQUESTTIMEPERCLICK: 
 		return { ...state, per_click_flag: action.payload};
-	case CC: 
-		return { ...state, klika: state.klika + 1};
-	case CCR: 
-		return { ...state, klika: 0};
-	case TPC: 
-		return { ...state, arr_klika_vreme: [action.payload, ...state.arr_klika_vreme]};
-	case RTPC: 
-		return { ...state, arr_klika_vreme: [] };
+	case CLICKCOUNTER: 
+		return { ...state, clicks_count: state.clicks_count + 1};
+	case CLICKCOUNTERRESET: 
+		return { ...state, clicks_count: 0};
+	case TIMEPERCLICK: 
+		return { ...state, arr_time_per_clicks: [action.payload, ...state.arr_time_per_clicks]};
+	case RESETTIMEPERCLICK: 
+		return { ...state, arr_time_per_clicks: [] };
 	default:
 		return state;
 	}

@@ -3,7 +3,7 @@ import { View, Image, TouchableOpacity, ImageBackground, Text, StatusBar, BackHa
 import { Actions } from 'react-native-router-flux'
 import { connect } from 'react-redux'
 import { storage, recStorage } from '../Actions/Process'
-import { unlockedLevels, upisiRekordURedux } from '../Actions'
+import { unlockedLevels, writeRecordInRedux } from '../Actions'
 import styles from '../Styles/StartStyle'
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated'])  // this warning is coming from react module ( react.development.js )
@@ -43,7 +43,7 @@ class Start extends Component {
         autoSync: true,
         syncInBackground: true,
         })
-        .then(ret => {this.props.upisiRekordURedux(ret);})
+        .then(ret => {this.props.writeRecordInRedux(ret);})
         .catch(err => {
             switch (err.name) {
             case 'NotFoundError':
@@ -58,7 +58,7 @@ class Start extends Component {
     }
 
     componentWillUnmount() {
-        BackHandler.removeEventListener("hardwareBackPress", this.onBackClicked);
+        BackHandler.removeEventListener("hardwareBackPress", this.onBackClicked); // removing the hardware back button functionality
     }
 
     render() {
@@ -74,7 +74,7 @@ class Start extends Component {
                 <TouchableOpacity onPress={() => { Actions.pick() }} style={styles.touchableBtnStyle}>
                     <Image source={require('../Resources/power.png')} style={styles.button} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { Actions.score({ rekordi: this.props.rekordi }) }} style={styles.scoreTouchable}>
+                <TouchableOpacity onPress={() => { Actions.score({ all_records: this.props.all_records }) }} style={styles.scoreTouchable}>
                     <Text style={styles.score}>
                         Score List
                     </Text>
@@ -86,9 +86,9 @@ class Start extends Component {
 }
 
 const mapStateToProps = ({ proces }) => {
-    const { rekordi} = proces;
+    const { all_records } = proces;
   
-    return { rekordi };
+    return { all_records };
   };
 
-export default connect(mapStateToProps, { unlockedLevels, upisiRekordURedux })(Start);
+export default connect(mapStateToProps, { unlockedLevels, writeRecordInRedux })(Start);
