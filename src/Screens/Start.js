@@ -1,17 +1,30 @@
-import React, { Component } from 'react'
-import { View, Image, TouchableOpacity, ImageBackground, Text, StatusBar, BackHandler, YellowBox } from 'react-native'
-import { Actions } from 'react-native-router-flux'
-import { connect } from 'react-redux'
-import { storage, recStorage } from '../Actions/Process'
-import { unlockedLevels, writeRecordInRedux } from '../Actions'
-import styles from '../Styles/StartStyle'
+import React, { Component } from 'react';
+import { View, Image, TouchableOpacity, ImageBackground, Text, StatusBar, BackHandler, YellowBox } from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
+import Sound from 'react-native-sound';
+import { storage, recStorage } from '../Actions/Process';
+import { unlockedLevels, writeRecordInRedux } from '../Actions';
+import styles from '../Styles/StartStyle';
+
 
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated'])  // this warning is coming from react module ( react.development.js )
+
+
 
 class Start extends Component {
     constructor(props){
         super(props);
         this.onBackClicked = this._onBackClicked;
+
+        this.enterSound = null;
+
+        enterSound = new Sound('enter.mp3', Sound.MAIN_BUNDLE, (error) => {
+            if (error) {
+                console.log('failed to load the sound', error);
+
+                return;
+        }});
     }
     //handling back button functionality
     _onBackClicked = () => {
@@ -20,6 +33,7 @@ class Start extends Component {
     }
 
     componentDidMount() {
+        
         //loading unlocked_game_lvl from 'local storage'
         storage.load({
           key: 'GameLevelStorage',
@@ -61,6 +75,11 @@ class Start extends Component {
         BackHandler.removeEventListener("hardwareBackPress", this.onBackClicked); // removing the hardware back button functionality
     }
 
+    powerButton = () => {
+        Actions.pick();
+        enterSound.setVolume(.4).play();
+    }
+
     render() {
         return(
         <ImageBackground source={require('../Resources/bgr.png')} style={styles.backgroundImage}>
@@ -71,7 +90,7 @@ class Start extends Component {
             <Image source={require('../Resources/logo.png')} style={styles.logoImage} />
             <Text style={styles.text}>TCGame</Text>
             <View style={styles.secondPart}>
-                <TouchableOpacity onPress={() => { Actions.pick() }} style={styles.touchableBtnStyle}>
+                <TouchableOpacity onPress={this.powerButton} style={styles.touchableBtnStyle}>
                     <Image source={require('../Resources/power.png')} style={styles.button} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => { Actions.score({ all_records: this.props.all_records }) }} style={styles.scoreTouchable}>

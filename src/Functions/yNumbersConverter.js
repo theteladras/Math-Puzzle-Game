@@ -15,5 +15,6 @@ export default goTroughArray = (arr) => {
     else if (Math.round(arr) == 12) { return 40; }   
     else if (Math.round(arr) == 13) { return 15+25/2; }
     else if (Math.round(arr) == 14) { return 15; }
-    else { return 200; }
+    else if (Math.round(arr) == 15) { return 15-25/2; }
+    else { return -10; }
 }

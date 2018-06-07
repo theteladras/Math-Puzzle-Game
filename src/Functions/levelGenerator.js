@@ -3,10 +3,11 @@ import { includes } from 'lodash';
 // gets all the selected ( green ) spots
 spotFinder = (firstNumber, lvl) => {
 	let spots = [];
-	let count = 0;
-	let num = firstNumber;
+	let furtherDown = 0;
+	let count = 0; // variable used for flaging the number of loops requiered
+	let num = firstNumber;  //used to store the selected number for each loop
 	// goes through a loop number of times that equals the level that we are on
-	while( count < lvl ) {
+	while( count < lvl + furtherDown ) {
 		let potentialSpots = [];
 		let spot = null;
 		let leftField = null;
@@ -47,6 +48,7 @@ spotFinder = (firstNumber, lvl) => {
 				rightBottomDiagonal = num + 22;
 			}
 		}
+		// finding spots for one diggit numbers
 		else {
 			if (num > 2 ) {
 				leftField = num - 3;
@@ -62,7 +64,7 @@ spotFinder = (firstNumber, lvl) => {
 				rightBottomDiagonal = num + 22;
 			}
 		}
-        
+    // if the selected values are not previously selected they will be pushed in a array of chosen numbers
 		if (leftField && !(includes(spots, leftField)) && leftField != firstNumber) {potentialSpots.push(leftField);} 
 		if (rightField && !(includes(spots, rightField)) && rightField != firstNumber) {potentialSpots.push(rightField);}
 		if (upperField && !(includes(spots, upperField)) && upperField != firstNumber) {potentialSpots.push(upperField);} 
@@ -71,15 +73,29 @@ spotFinder = (firstNumber, lvl) => {
 		if (rightBottomDiagonal && !(includes(spots, rightBottomDiagonal)) && rightBottomDiagonal != firstNumber) {potentialSpots.push(rightBottomDiagonal);}
 		if (leftUpperDiagonal && !(includes(spots, leftUpperDiagonal)) && leftUpperDiagonal != firstNumber) {potentialSpots.push(leftUpperDiagonal);} 
 		if (rightUpperDiagonal && !(includes(spots, rightUpperDiagonal)) && rightUpperDiagonal != firstNumber) {potentialSpots.push(rightUpperDiagonal);}
-        
+    // picking a random number of the chosen spots that was stored in the previous array (making a randome move)
 		spot = potentialSpots[Math.floor(Math.random()*(potentialSpots.length-1))];
-		spots.push(spot);
+		// if the next spot is unvalid go back trough array and take another number and check available spots for that number
+		if (!spot) {
+			num = spots[spots.length-2-furtherDown];
+			// if it passes the search limit drop the loop
+			if (furtherDown > lvl) {
+				furtherDown = 0;
+			}
+			// extend the search for a tile
+			else {
+				furtherDown += 1;
+			}
+		}
+		// if the spot is available it will be pushed to the chosen tiles, and the next number will be passed for search que
+		else {
+			spots.push(spot);
+			num = spot;
+		}
 		count++;
-		num = spot;
 	}
 	return spots;
 }
-
 
 //gets all the spots that need to be clicked next ( yellow )
 yellowBoxes = (index, spot) => {

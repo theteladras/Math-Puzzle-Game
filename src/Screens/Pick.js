@@ -23,6 +23,9 @@ export default class Pick extends Component {
 
     componentDidMount() {
         BackHandler.addEventListener('hardwareBackPress', this.onBackClicked);
+        if (this.props.pageProps) {
+            this.setState({ currentPage: this.props.pageProps });
+        }
     }
 
     componentWillUnmount() {

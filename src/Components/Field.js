@@ -1,9 +1,10 @@
-import React, { Component } from 'react'
-import { View, TouchableOpacity, Text, Button, BackHandler } from 'react-native'
-import { includes, difference, compact } from 'lodash'
-import Modal from 'react-native-modal'
-import { Actions } from 'react-native-router-flux'
-import { connect } from 'react-redux'
+import React, { Component } from 'react';
+import { View, TouchableOpacity, Text, Button, BackHandler } from 'react-native';
+import { includes, difference, compact } from 'lodash';
+import Modal from 'react-native-modal';
+import Sound from 'react-native-sound';
+import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
 import { unlockNextLVL, 
         currentLVL,
         writeRecordInStorage, 
@@ -15,13 +16,13 @@ import { unlockNextLVL,
         lifepointsDecrese,
         clickCounterReset,
         resetTimePerClickCount,
-        Rerender } from '../Actions'
-import { spotFinder, yellowBoxes } from '../Functions/levelGenerator'
-import ModalComplete from './ModalComplete'
-import ModalFail from './ModalFail'
-import ModalGameOver from './ModalGameOver'
-import Config from '../Functions/Config.json'
-import styles from '../Styles/FieldStyle'
+        Rerender } from '../Actions';
+import { spotFinder, yellowBoxes } from '../Functions/levelGenerator';
+import ModalComplete from './ModalComplete';
+import ModalFail from './ModalFail';
+import ModalGameOver from './ModalGameOver';
+import Config from '../Functions/Config.json';
+import styles from '../Styles/FieldStyle';
 
 
 var foo = new Array(10);
@@ -32,6 +33,15 @@ class Field extends Component {
     constructor(props){
         super(props);
         this.onBackClicked = this._onBackClicked.bind(this);
+
+        this.tileSound = null;
+        // initializing sound sample to the variable
+        tileSound = new Sound('tile_sound.mp3', Sound.MAIN_BUNDLE, (error) => {
+            if (error) {
+                console.log('failed to load the sound', error);
+
+                return;
+        }});
       }
     state = {  
                 begining: true, refresh: true, chosenTiles: [], clickedTile: [],
@@ -58,6 +68,7 @@ class Field extends Component {
     pressTile(index) {  
         // lvl progress afther first click
         if (includes(this.state.nextToClick, index) && this.state.nextToClick.length > 0) {
+            tileSound.play();
             this.props.clickCounter(); // recording how many clicks are made
             this.props.requestTimePerClickValue(true); // geting the time per click value
             let nextToClick;
@@ -94,7 +105,8 @@ class Field extends Component {
             
         }
         // first click ( begining the game ) flag
-        if (this.state.begining) { 
+        if (this.state.begining) {
+            tileSound.play();
             this.props.resetTimePerClickCount();
             this.props.clickCounter(); // recording how many clicks are made
             let spot = spotFinder(index, this.state.thisLevel); // calling the methodes to find all the spots for a particular LVL ( LVL ALGORITHM INICIALIZATION )
@@ -103,7 +115,7 @@ class Field extends Component {
                 clickedTile: [index],
                 begining: false,
                 nowClicked: index,
-                chosenTiles: compact(spot),
+                chosenTiles: this.state.thisLevel == 99 ? [...spot, 0] : compact(spot),
                 nextToClick,
             });
         }

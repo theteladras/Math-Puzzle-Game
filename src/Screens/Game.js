@@ -6,12 +6,12 @@ import Status from '../Components/Status'
 import styles from '../Styles/GameStyle'
 
 
-const Game = ({ pickedLVL, maxLevel, reload }) => {
+const Game = ({ pickedLVL, maxLevel, reload, pageProps }) => {
     return (
         <View style={styles.container}>
             <Field pickedLVL={pickedLVL} maxLevel={maxLevel} />
-            <Status pickedLVL={pickedLVL} reload={reload}/>
-            <TouchableHighlight onPress={ () => { Actions.pick(); }} style={styles.quitButton}>
+            <Status pickedLVL={pickedLVL} reload={reload} componentLinkedLvl={pickedLVL} />
+            <TouchableHighlight onPress={ () => { Actions.pick({ pageProps }); }} style={styles.quitButton}>
                 <Text style={styles.quit}>Exit</Text>
             </TouchableHighlight>
         </View>
