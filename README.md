@@ -21,3 +21,13 @@ Once that is done, you can build your APK by runing 'cd android && ./gradlew ass
 
 The APK will be located at: 'android\app\build\outputs\apk'. 
 Note: use the app-release.apk
+
+### Play rules
+After the first click, the player can only click on available fields by following the rules of
+movement. The player can click on any box in the specific range from the previously
+clicked box.
+
+You can move not more or less than three fields vertically and horizontally, or you can
+move not more or less than two fields diagonally.
+
+Each level will generate a number of clickable boxes equal to the level number.
